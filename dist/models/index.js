@@ -5,6 +5,7 @@ mongoose.connect(`mongodb://${DATABASE_URL}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
+// Article Schema
 // image url missing
 const articleSchema = new Schema({
     name: String,
@@ -12,4 +13,42 @@ const articleSchema = new Schema({
     quantity: Number,
     price: Number
 }, { collection: 'articles' });
+// Menu Schema
+const menuSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    articles: [{
+            name: {
+                type: String,
+                required: true
+            },
+            type: {
+                type: String,
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+            url: {
+                type: String,
+                required: false
+            }
+        }],
+    price: {
+        type: Number,
+        required: true
+    },
+    url: {
+        type: String,
+        required: false
+    }
+});
 module.exports.Article = mongoose.model('Article', articleSchema, 'articles');
+module.exports.Menu = mongoose.model('Menu', articleSchema, 'menus');

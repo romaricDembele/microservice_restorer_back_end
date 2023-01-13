@@ -1,15 +1,15 @@
 const router = require('express').Router();
-const { articleById, read, create, update, remove } = require('../controllers/index')
+const { articleById, readArticles, createArticle, updateArticle, removeArticle } = require('../controllers/index')
 
 
-router.get("/articles", read);
+router.get("/", readArticles);
 
-router.get('/articles/:id', articleById, read);
+// router.get('/articles/:id', articleById, readArticle);
 
-router.post('/articles', create);
+router.post('/', createArticle);
 
-router.put('/articles/:id', update);
+router.put('/:id', updateArticle);
 
-router.delete('/articles/:id', remove);
+router.delete('/:id', removeArticle);
 
 module.exports = router;
