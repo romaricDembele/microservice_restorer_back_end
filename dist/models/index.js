@@ -51,4 +51,4 @@ const menuSchema = new Schema({
     }
 });
 module.exports.Article = mongoose.model('Article', articleSchema, 'articles');
-module.exports.Menu = mongoose.model('Menu', articleSchema, 'menus');
+module.exports.Menu = mongoose.model('Menu', menuSchema, 'menus');
