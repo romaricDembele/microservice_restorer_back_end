@@ -12,6 +12,9 @@ app.use('/api/restorer/menus', menuRoutes);
 app.get("/", (req, res, next) => {
     res.send("This is the beginning of a new journey.");
 });
+app.use(function (req, res, next) {
+    res.status(404).send("Sorry, that route does not exist. Try again.");
+});
 app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);
 });

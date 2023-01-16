@@ -17,6 +17,10 @@ app.get("/", (req: any, res: any, next: any) => {
     res.send("This is the beginning of a new journey.")
 });
 
+app.use(function (req: any, res: any, next: any) {
+    res.status(404).send("Sorry, that route does not exist. Try again.");
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);
 });

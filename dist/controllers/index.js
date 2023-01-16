@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// import {mongoose, Article} from '../models'
 const { Article, Menu } = require('../models/index');
 exports.articleById = (req, res, next) => {
 };
@@ -22,7 +21,7 @@ exports.readArticles = (req, res, next) => {
             console.log(articles);
             res.json(articles);
         }
-    });
+    }).select({ __v: 0 });
 };
 exports.createArticle = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
@@ -47,7 +46,7 @@ exports.updateArticle = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
 exports.removeArticle = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const article = Article.deleteOne({ _id: req.params.id }).exec();
-        res.json(article);
+        res.status(204).json(article);
     }
     catch (error) {
         console.log(error);
@@ -55,18 +54,20 @@ exports.removeArticle = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 // Menu helpers
-exports.readMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.menuById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.readMenus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     Menu.find({}, (err, menus) => {
         if (err) {
             console.log(err);
         }
         else {
             console.log(menus);
-            res.json(menus);
+            res.status(200).json(menus);
         }
     });
 });
-// exports.readMenus = async (req: any, res: any, next: any) => {
+// exports.readMenu = async (req: any, res: any, next: any) => {
 // };
 exports.createMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
@@ -79,7 +80,23 @@ exports.createMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         console.log(err);
     }
 });
-// exports.updateMenu = async (req: any, res: any, next: any) => {
-// };
-// exports.removeMenu = async (req: any, res: any, next: any) => {
-// }; 
+exports.updateMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
+    try {
+        const response = yield Menu.updateOne({ _id: req.params.id }, req.body).exec();
+        res.status(200).json(response);
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.removeMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const menu = Menu.deleteOne({ _id: req.params.id }).exec();
+        return res.status(204).json({ message: 'successfully deleted' });
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+});

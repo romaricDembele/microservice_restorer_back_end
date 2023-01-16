@@ -1,7 +1,6 @@
 
 // Import field valitator from utils
 
-// import {mongoose, Article} from '../models'
 
 const {Article, Menu} = require('../models/index');
 
@@ -17,7 +16,7 @@ exports.readArticles = (req: any, res: any, next: any) => {
             console.log(articles);
             res.json(articles);
         }
-    });
+    }).select({ __v: 0 });
 };
 
 
@@ -47,7 +46,7 @@ exports.updateArticle = async (req: any, res: any, next: any) => {
 exports.removeArticle = async (req: any, res: any, next: any) => {
     try {
         const article = Article.deleteOne({ _id: req.params.id }).exec();
-        res.json(article);
+        res.status(204).json(article);
     } catch (error: any) {
         console.log(error);
         return
@@ -55,20 +54,25 @@ exports.removeArticle = async (req: any, res: any, next: any) => {
 };
 
 // Menu helpers
-exports.readMenu = async (req: any, res: any, next: any) => {
+exports.menuById = async (req: any, res: any, next: any) => {
+
+};
+
+exports.readMenus = async (req: any, res: any, next: any) => {
     Menu.find({}, (err: any, menus: any) => {
         if (err) {
             console.log(err);
         } else {
             console.log(menus);
-            res.json(menus);
+            res.status(200).json(menus);
         }
     });
 }; 
 
-// exports.readMenus = async (req: any, res: any, next: any) => {
+// exports.readMenu = async (req: any, res: any, next: any) => {
 
 // };
+
 exports.createMenu = async (req: any, res: any, next: any) => {
     console.log(req.body);
     const menuDocument = new Menu(req.body);
@@ -80,9 +84,23 @@ exports.createMenu = async (req: any, res: any, next: any) => {
     }
 
 };
-// exports.updateMenu = async (req: any, res: any, next: any) => {
 
-// };
-// exports.removeMenu = async (req: any, res: any, next: any) => {
+exports.updateMenu = async (req: any, res: any, next: any) => {
+    console.log(req.body);
+    try {
+        const response = await Menu.updateOne({ _id: req.params.id }, req.body).exec();
+        res.status(200).json(response);  
+    } catch (err) {
+        console.log(err);
+    }
+};
 
-// }; 
+exports.removeMenu = async (req: any, res: any, next: any) => {
+    try {
+        const menu = Menu.deleteOne({ _id: req.params.id }).exec();
+        return res.status(204).json({ message: 'successfully deleted' });
+    } catch (error: any) {
+        console.log(error);
+        return;
+    }
+}; 
