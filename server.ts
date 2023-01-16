@@ -6,6 +6,7 @@ const PORT = 3000;
 
 const articleRoutes = require('./routes/article');
 const menuRoutes = require('./routes/menu');
+const orderRoutes = require('./routes/order');
 
 app.use(cors());
 

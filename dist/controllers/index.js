@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const { Article, Menu } = require('../models/index');
 exports.articleById = (req, res, next) => {
 };
@@ -99,4 +100,13 @@ exports.removeMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         console.log(error);
         return;
     }
+});
+////////// ORDERS
+exports.readOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.updateOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.deleteOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });

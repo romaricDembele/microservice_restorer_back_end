@@ -5,6 +5,7 @@ const app = express();
 const PORT = 3000;
 const articleRoutes = require('./routes/article');
 const menuRoutes = require('./routes/menu');
+const orderRoutes = require('./routes/order');
 app.use(cors());
 app.use(express.json());
 app.use('/api/restorer/articles', articleRoutes);

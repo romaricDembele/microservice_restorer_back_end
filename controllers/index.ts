@@ -1,6 +1,8 @@
 
 // Import field valitator from utils
 
+import { NextFunction } from "express";
+
 
 const {Article, Menu} = require('../models/index');
 
@@ -104,3 +106,20 @@ exports.removeMenu = async (req: any, res: any, next: any) => {
         return;
     }
 }; 
+
+////////// ORDERS
+exports.readOrders = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+exports.createOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+exports.updateOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+exports.deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+}
