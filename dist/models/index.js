@@ -5,50 +5,71 @@ mongoose.connect(`mongodb://${DATABASE_URL}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
-// Article Schema
-// image url missing
 const articleSchema = new Schema({
     name: String,
     type: String,
     quantity: Number,
-    price: Number
+    price: Number,
+    image_url: {
+        type: String,
+    }
 }, { collection: 'articles' });
-// Menu Schema
 const menuSchema = new Schema({
     name: {
         type: String,
         required: true
     },
-    articles: [{
-            name: {
-                type: String,
-                required: true
-            },
-            type: {
-                type: String,
-                required: true
-            },
-            quantity: {
-                type: Number,
-                required: true
-            },
-            price: {
-                type: Number,
-                required: true
-            },
-            url: {
-                type: String,
-                required: false
-            }
-        }],
+    articles: [{ type: Schema.Types.ObjectId, ref: 'Article' }],
     price: {
         type: Number,
         required: true
     },
-    url: {
+    image_url: {
         type: String,
         required: false
     }
 });
+const orderSchema = new mongoose.Schema({
+    client: { type: String },
+    restaurant: {
+        name: { type: String },
+        location: { type: String },
+        opening_time: { type: String },
+    },
+    order: {
+        menus: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Menu' }],
+        total_cost: { type: Number },
+        status: { type: String },
+        time_placed: { type: Date },
+        time_delivered: { type: Date },
+        delivery_person: {
+            deliver_username: { type: String },
+            delivery_location: { type: String },
+        },
+    },
+    code_client: { type: String },
+    code_restaurant: { type: String },
+});
+const restaurantSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    opening_time: {
+        type: Array,
+        required: true
+    },
+    menus: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Menu' }],
+    image_url: {
+        type: String,
+        required: true
+    }
+});
 module.exports.Article = mongoose.model('Article', articleSchema, 'articles');
 module.exports.Menu = mongoose.model('Menu', menuSchema, 'menus');
+module.exports.Order = mongoose.model('Order', orderSchema);
+module.exports.Restaurant = mongoose.model('Restaurant', restaurantSchema);

@@ -4,7 +4,7 @@ const { articleById, readArticles, createArticle, updateArticle, removeArticle }
 
 router.get("/", readArticles);
 
-// router.get('/articles/:id', articleById, readArticle);
+// router.get('/articles/:id', readArticle);
 
 router.post('/', createArticle);
 

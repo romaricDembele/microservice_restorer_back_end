@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const { Article, Menu } = require('../models/index');
+const { Article, Menu, Order, Restaurant } = require('../models/index');
+/* --------------------------- ARTICLES ------------------------------------------------ */
 exports.articleById = (req, res, next) => {
 };
 exports.readArticles = (req, res, next) => {
@@ -54,11 +55,12 @@ exports.removeArticle = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         return;
     }
 });
-// Menu helpers
-exports.menuById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-});
+/* --------------------------- MENUS ------------------------------------------------ */
 exports.readMenus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    Menu.find({}, (err, menus) => {
+    Menu.find({}).select('-__v').populate({
+        path: 'articles',
+        select: '-__v'
+    }).exec((err, menus) => {
         if (err) {
             console.log(err);
         }
@@ -101,12 +103,151 @@ exports.removeMenu = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         return;
     }
 });
-////////// ORDERS
+/* --------------------------- ORDERS ------------------------------------------------ */
 exports.readOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    Order.find({}).select('-__v').populate({
+        path: 'order.menus',
+        select: '-__v',
+        populate: {
+            path: 'articles',
+            select: '-__v'
+        }
+    }).exec((err, orders) => {
+        if (err) {
+            console.log(err);
+            res.status(500);
+            return;
+        }
+        else {
+            console.log(orders);
+            res.status(200).json(orders);
+            next();
+        }
+    });
 });
 exports.createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
+    const orderDocument = new Order(req.body);
+    try {
+        const response = yield orderDocument.save();
+        res.status(201).json(response);
+    }
+    catch (error) {
+        console.log(error);
+    }
 });
 exports.updateOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const order = yield Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-__v');
+        res.status(200).json(order);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500);
+        return;
+    }
 });
-exports.deleteOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.removeOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const order = yield Order.findByIdAndDelete(req.params.id).select('-__v');
+        res.status(204).json(order);
+        next();
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500);
+    }
 });
+/* --------------------------- RESTAURANTS ------------------------------------------------ */
+exports.readRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const restaurant = yield Restaurant.find({}).select('-__v').populate({
+            path: 'menus',
+            select: '-__v',
+            populate: {
+                path: 'articles',
+                select: '-__v'
+            }
+        });
+        if (!restaurant || restaurant.length === 0) {
+            return res.status(404).json({ message: 'No restaurants found' });
+        }
+        res.status(200).json(restaurant);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'An error occurred while retrieving restaurants' });
+    }
+});
+exports.createRestaurant = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const restaurantDocument = new Restaurant(req.body);
+    try {
+        const response = yield restaurantDocument.save().select('-__v').populate({
+            path: 'menus',
+            select: '-__v',
+            populate: {
+                path: 'articles',
+                select: '-__v'
+            }
+        });
+        res.status(201).json(response);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500);
+    }
+});
+exports.updateRestaurant = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const restaurant = yield Restaurant.findById(req.params.id);
+        if (!restaurant) {
+            return res.status(404).json({ message: "Restaurant not found" });
+        }
+        const updatedRestaurant = yield Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-__v').populate({
+            path: 'menus',
+            select: '-__v',
+            populate: {
+                path: 'articles',
+                select: '-__v'
+            }
+        });
+        if (!updatedRestaurant) {
+            return res.status(500).json({ message: "Error updating restaurant" });
+        }
+        res.status(200).json(updatedRestaurant);
+    }
+    catch (error) {
+        console.error(error);
+        if (error instanceof mongoose.Error.ValidationError) {
+            res.status(400).json({ message: error.message });
+        }
+        else {
+            res.status(500).json({ message: "Error updating restaurant" });
+        }
+    }
+});
+exports.removeRestaurant = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const restaurant = yield Restaurant.findById(req.params.id);
+        if (!restaurant) {
+            return res.status(404).json({ message: "Restaurant not found" });
+        }
+        const deletedRestaurant = yield Restaurant.findByIdAndDelete(req.params.id).select('-__v');
+        if (!deletedRestaurant) {
+            return res.status(500).json({ message: "Error deleting restaurant" });
+        }
+        res.status(200).json({ message: "Restaurant deleted successfully" });
+    }
+    catch (error) {
+        console.error(error);
+        if (error instanceof mongoose.Error.ValidationError) {
+            res.status(400).json({ message: error.message });
+        }
+        else {
+            res.status(500).json({ message: "Error deleting restaurant" });
+        }
+    }
+});
+// en cours
+// livraison
+// délivré
