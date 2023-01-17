@@ -35,31 +35,6 @@ const menuSchema = new Schema({
     }
 });
 
-
-
-const orderSchema = new mongoose.Schema({
-    client: { type: String },
-    restaurant: {
-        name: { type: String },
-        location: { type: String },
-        opening_time: { type: String },
-    },
-    order: {
-        menus: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Menu' }],
-        total_cost: { type: Number },
-        status: { type: String },
-        time_placed: { type: Date },
-        time_delivered: { type: Date },
-        delivery_person: {
-            deliver_username: { type: String },
-            delivery_location: { type: String },
-        },
-    },
-    code_client: { type: String },
-    code_restaurant: { type: String },
-});
-
-
 const restaurantSchema = new Schema({
     name: {
         type: String,
@@ -79,6 +54,25 @@ const restaurantSchema = new Schema({
         required: true
     }
 });
+
+const orderSchema = new mongoose.Schema({
+    client: { type: String },
+    restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
+    order: {
+        menus: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Menu' }],
+        total_cost: { type: Number },
+        status: { type: String },
+        time_placed: { type: Date },
+        time_delivered: { type: Date },
+        delivery_person: {
+            deliver_username: { type: String },
+            delivery_location: { type: String },
+        },
+    },
+    code_client: { type: String },
+    code_restaurant: { type: String },
+});
+
 
 
 module.exports.Article = mongoose.model('Article', articleSchema,'articles');

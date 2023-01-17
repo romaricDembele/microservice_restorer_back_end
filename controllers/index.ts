@@ -121,6 +121,9 @@ exports.readOrders = async (req: Request, res: Response, next: NextFunction) => 
             path: 'articles',
             select: '-__v'
         }
+    }).populate({
+        path: 'restaurant',
+        select: '-__v'
     }).exec((err: any, orders: any) => {
         if (err) {
             console.log(err);
@@ -138,7 +141,14 @@ exports.createOrder = async (req: any, res: any, next: any) => {
     console.log(req.body);
     const orderDocument = new Order(req.body);
     try {
-        const response = await orderDocument.save();
+        const response = await orderDocument.save({
+            select: '-__v'
+        });
+        await Order.populate(response, [
+            {path:'restaurant',select: '-__v'},
+            {path:'restaurant.menus',select: '-__v'},
+            {path:'order.menus', populate:{path:'articles',select: '-__v'}}
+        ])
         res.status(201).json(response);
     } catch (error) {
         console.log(error);

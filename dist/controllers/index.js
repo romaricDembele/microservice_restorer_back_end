@@ -112,6 +112,9 @@ exports.readOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             path: 'articles',
             select: '-__v'
         }
+    }).populate({
+        path: 'restaurant',
+        select: '-__v'
     }).exec((err, orders) => {
         if (err) {
             console.log(err);
@@ -129,7 +132,14 @@ exports.createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     console.log(req.body);
     const orderDocument = new Order(req.body);
     try {
-        const response = yield orderDocument.save();
+        const response = yield orderDocument.save({
+            select: '-__v'
+        });
+        yield Order.populate(response, [
+            { path: 'restaurant', select: '-__v' },
+            { path: 'restaurant.menus', select: '-__v' },
+            { path: 'order.menus', populate: { path: 'articles', select: '-__v' } }
+        ]);
         res.status(201).json(response);
     }
     catch (error) {
