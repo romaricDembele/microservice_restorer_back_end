@@ -157,12 +157,47 @@ exports.createOrder = async (req: any, res: any, next: any) => {
 
 exports.updateOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const order = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-__v');
+        const order = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('restaurant');
+
+        await order.populate({
+        path: 'restaurant',
+        select: '-__v',
+        populate: {
+            path: 'menus',
+            select: '-__v',
+            populate: {
+                path: 'articles',
+                select: '-__v'
+            }
+        }}).execPopulate();
+
         res.status(200).json(order);
     } catch (error) {
         console.log(error);
         res.status(500);
         return;
+    };
+};
+
+
+exports.updateOrderStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        order.set({ "order.status": req.body.status });
+        await order.save();
+        await order.populate('restaurant', '-__v').populate({
+            path: 'order.menus',
+            select: '-__v',
+            populate: {
+            path: 'articles',
+            select: '-__v'
+        }
+        }).execPopulate();
+        return res.status(200).json(order);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500);
     }
 };
 

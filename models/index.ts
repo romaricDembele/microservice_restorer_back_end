@@ -33,7 +33,7 @@ const menuSchema = new Schema({
         type: String,
         required: false
     }
-});
+}, { collection: 'menus' });
 
 const restaurantSchema = new Schema({
     name: {
@@ -53,7 +53,7 @@ const restaurantSchema = new Schema({
         type: String,
         required: true
     }
-});
+}, { collection: 'restaurants' });
 
 const orderSchema = new mongoose.Schema({
     client: { type: String },
@@ -71,13 +71,13 @@ const orderSchema = new mongoose.Schema({
     },
     code_client: { type: String },
     code_restaurant: { type: String },
-});
+}, { collection: 'articles' });
 
 
 
 module.exports.Article = mongoose.model('Article', articleSchema,'articles');
 module.exports.Menu = mongoose.model('Menu', menuSchema,'menus');
-module.exports.Order = mongoose.model('Order', orderSchema);
-module.exports.Restaurant = mongoose.model('Restaurant', restaurantSchema);
+module.exports.Order = mongoose.model('Order', orderSchema, 'orders');
+module.exports.Restaurant = mongoose.model('Restaurant', restaurantSchema, 'restaurants');
 
 

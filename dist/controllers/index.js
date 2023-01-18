@@ -148,13 +148,55 @@ exports.createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 exports.updateOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const order = yield Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-__v');
+        const order = yield Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('restaurant');
+        //   await order.populate({
+        //     path: 'restaurant',
+        //     select: '-__v',
+        //     populate: {
+        //         path: 'menus',
+        //         select: '-__v',
+        //         populate: {
+        //             path: 'articles',
+        //             select: '-__v'
+        //         }
+        //   }}).execPopulate();
         res.status(200).json(order);
     }
     catch (error) {
         console.log(error);
         res.status(500);
         return;
+    }
+    ;
+});
+// exports.updateOrderStatus = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const order = await Order.findByIdAndUpdate(req.params.id, { "order.status": req.body.status }, { new: true }).select('-__v');
+//         return res.status(200).json(order);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500);
+//         return;
+//     }
+// };
+exports.updateOrderStatus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const order = yield Order.findById(req.params.id);
+        order.set({ "order.status": req.body.status });
+        yield order.save();
+        yield order.populate('restaurant', '-__v').populate({
+            path: 'order.menus',
+            select: '-__v',
+            populate: {
+                path: 'articles',
+                select: '-__v'
+            }
+        }).execPopulate();
+        return res.status(200).json(order);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500);
     }
 });
 exports.removeOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
